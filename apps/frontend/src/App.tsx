@@ -12,7 +12,7 @@ function App() {
   const [sid, setSid] = useState<string | null>(null);
 
   const fetchData = useCallback(() => {
-    fetch('http://localhost:8000/user/me', {
+    fetch('http://localhost:20100/user/me', {
       headers: {
         Authorization: `Bearer ${token}`,
       },

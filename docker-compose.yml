@@ -22,10 +22,36 @@ services:
       POSTGRES_PASSWORD: password
     ports:
       - '20083:5432'
+  python:
+    container_name: keycloak-workshop-python
+    build: ./apps/backend
+    command: uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8000
+    volumes:
+      - './apps/backend/app:/var/www/app/app'
+    ports:
+      - "20100:8000"
+    depends_on:
+      keycloak:
+        condition: service_healthy
+  react:
+    build: ./apps/frontend
+    container_name: keycloak-workshop-react
+    command: npm run dev
+    volumes:
+      - './apps/frontend/src:/var/www/app/src'
+    ports:
+      - "20101:8000"
   keycloak:
     container_name: keycloak-workshop-keycloak
     image: quay.io/keycloak/keycloak
     command: ["--verbose", "start-dev", "--http-port=11100"]
+    volumes:
+      - './keycloak/keycloak.conf:/opt/keycloak/conf/keycloak.conf'
+    healthcheck:
+      test: [ "CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/11100;echo -e \"GET /health/ready HTTP/1.1\r\nhost: http://localhost\r\nConnection: close\r\n\r\n\" >&3;grep \"HTTP/1.1 200 OK\" <&3" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     environment:
       KC_DB: postgres
       KC_DB_URL_HOST: postgres
@@ -35,13 +61,19 @@ services:
       KC_DB_PASSWORD: password
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: Pa55w0rd
-      KC_FEATURES: linkedin-oauth
       KC_FEATURES_DISABLED: impersonation
-    ports:
-      - '20090:11100'
-      - '20091:8443'
+      KC_HEALTH_ENABLED: true
     depends_on:
       - postgres
+  nginx:
+    container_name: keycloak-workshop-nginx
+    image: nginx:alpine
+    volumes:
+      - "./nginx/nginx.conf:/etc/nginx/conf.d/default.conf"
+    ports:
+      - "20090:20090"
+    depends_on:
+      - keycloak
 volumes:
   postgres_workshop_data:
     driver: local
