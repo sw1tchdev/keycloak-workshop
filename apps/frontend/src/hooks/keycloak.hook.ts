@@ -12,6 +12,7 @@ export const useKeycloak = () => {
   const keycloak = useMemo(() => createKeycloak(), []);
   const [authUser, setAuthUser] = useState<null | { token?: KeycloakTokenParsed }>(null);
   const [isAuth, setIsAuth] = useState<boolean | null>(null);
+  const [token, setToken] = useState<string | null>(null);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const didInitialize = useRef(false);
@@ -26,6 +27,7 @@ export const useKeycloak = () => {
         setIsAuth(isAuth);
         if (isAuth) {
           setAuthUser({ token: keycloak.tokenParsed });
+          setToken(keycloak.token as string);
         }
       })
       .catch(({ error }) => {
@@ -47,6 +49,15 @@ export const useKeycloak = () => {
     [keycloak],
   );
 
+  const refresh = useCallback(() => {
+    keycloak.updateToken(5).then((isUpdate) => {
+      if (isUpdate) {
+        setAuthUser({ token: keycloak.tokenParsed });
+        setToken(keycloak.token as string);
+      }
+    });
+  }, [keycloak]);
+
   useEffect(() => {
     if (didInitialize.current) {
       return;
@@ -56,5 +67,5 @@ export const useKeycloak = () => {
     keycloakInit();
   }, [keycloak, keycloakInit]);
 
-  return { authUser, isAuth, login, logout, isLoaded, errorMessage };
+  return { authUser, isAuth, login, logout, refresh, isLoaded, token, errorMessage };
 };
