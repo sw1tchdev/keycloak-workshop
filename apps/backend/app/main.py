@@ -4,13 +4,13 @@ from fastapi import FastAPI, Header, HTTPException, Depends, Form, Body
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.requests import Request
 
-keycloak_openid = KeycloakOpenID(server_url="http://nginx:20090",
+keycloak_openid = KeycloakOpenID(server_url="http://nginx:30090",
                                  client_id="backend",
                                  realm_name="workshop",
                                  client_secret_key="client_secret_here")
 
 admin = KeycloakAdmin(
-    server_url="http://nginx:20090",
+    server_url="http://nginx:30090",
     client_id="backend",
     realm_name="workshop",
     client_secret_key="client_secret_here",
@@ -39,6 +39,7 @@ async def verify_token(request: Request, authorization: Annotated[str, Header()]
     [_, token] = authorization.split('Bearer ')
     try:
         token_info = keycloak_openid.decode_token(token, key=KEYCLOAK_PUBLIC_KEY, options=options)
+
         request.state.user = token_info
 
         # TODO implement check map_sids
