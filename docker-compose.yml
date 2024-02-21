@@ -63,7 +63,7 @@ services:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: Pa55w0rd
       KC_FEATURES_DISABLED: impersonation
-      KC_HEALTH_ENABLED: true
+      KC_HEALTH_ENABLED: 'true'
     depends_on:
       - postgres
   nginx:
