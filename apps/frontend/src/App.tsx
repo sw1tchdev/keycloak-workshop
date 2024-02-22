@@ -6,24 +6,19 @@ import Loaded from './components/Loaded';
 import reactLogo from './assets/react.svg';
 import keycloakLogo from '/keycloak.svg';
 import './App.css';
+import { getSid } from './api';
 
 function App() {
   const { authUser, login, logout, isAuth, isLoaded, errorMessage, refresh, token } = useKeycloak();
   const [sid, setSid] = useState<string | null>(null);
 
   const fetchData = useCallback(() => {
-    fetch('http://localhost:30100/user/me', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((res) => {
-        if (res.status !== 200) {
-          throw new Error('Reject');
-        }
+    if (!token) {
+      setSid('Token is not provide');
+      return;
+    }
 
-        return res.json();
-      })
+    getSid(token)
       .then((res) => {
         setSid(res.sid);
       })

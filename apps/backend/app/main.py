@@ -1,19 +1,24 @@
+import os
+
 from keycloak import KeycloakOpenID, KeycloakAdmin
 from typing import Annotated
 from fastapi import FastAPI, Header, HTTPException, Depends, Form, Body
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.requests import Request
+from dotenv import load_dotenv
 
-keycloak_openid = KeycloakOpenID(server_url="http://nginx:30090",
-                                 client_id="backend",
-                                 realm_name="workshop",
-                                 client_secret_key="client_secret_here")
+load_dotenv()
+
+keycloak_openid = KeycloakOpenID(server_url=os.environ.get('KEYCLOAK_URL'),
+                                 client_id=os.environ.get('KEYCLOAK_CLIENT_ID'),
+                                 realm_name=os.environ.get('KEYCLOAK_REALM'),
+                                 client_secret_key=os.environ.get('KEYCLOAK_CLIENT_SECRET'))
 
 admin = KeycloakAdmin(
-    server_url="http://nginx:30090",
-    client_id="backend",
-    realm_name="workshop",
-    client_secret_key="client_secret_here",
+    server_url=os.environ.get('KEYCLOAK_URL'),
+    client_id=os.environ.get('KEYCLOAK_CLIENT_ID'),
+    realm_name=os.environ.get('KEYCLOAK_REALM'),
+    client_secret_key=os.environ.get('KEYCLOAK_CLIENT_SECRET'),
     auto_refresh_token=['get', 'put', 'post', 'delete'])
 
 KEYCLOAK_PUBLIC_KEY = "-----BEGIN PUBLIC KEY-----\n" + keycloak_openid.public_key() + "\n-----END PUBLIC KEY-----"
