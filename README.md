@@ -15,3 +15,10 @@ Keycloak Workshop. Learn how to connect Frontend and Backend with Keycloak in th
 - MailDev http://localhost:30081
 - Adminer http://localhost:30080
 
+## Tasks
+
+1. Create realm `workshop` in Keycloak
+2. Create `backend` and `frontend` clients in Keycloak
+3. Fix Frontend code to working properly with Keycloak
+4. Fix Backend code to working properly with Keycloak
+5. Write the missing code in Backend
