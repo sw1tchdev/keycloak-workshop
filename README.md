@@ -4,8 +4,8 @@ Keycloak Workshop. Learn how to connect Frontend and Backend with Keycloak in th
 ## First Steps
 
 1. Copy `.env.example` to `.env` in root repository directory
-2. Copy `.env.example` to `.env` in `app/backend` directory
-3. Copy `.env.example` to `.env` in `app/frontend` directory
+2. Copy `apps/backend/.env.example` to `apps/backend/.env`
+3. Copy `apps/frontend/.env.example` to `apps/frontend/.env`
 4. Execute command `docker compose up --build`
 
 ## Services
